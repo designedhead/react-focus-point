@@ -1,6 +1,6 @@
 {
   "name": "@designedhead/react-focus-point",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A React component for setting focal points on images for responsive cropping",
   "publishConfig": {
     "access": "public"
