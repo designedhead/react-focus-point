@@ -58,9 +58,9 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
 
   // Map indicator size to Tailwind classes
   const indicatorSizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8'
+    sm: 'size-4',
+    md: 'size-6',
+    lg: 'size-8'
   };
 
   // Convert pixel coordinates to percentages
