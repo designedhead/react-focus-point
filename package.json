@@ -2,6 +2,9 @@
   "name": "@designedhead/react-focus-point",
   "version": "0.1.0",
   "description": "A React component for setting focal points on images for responsive cropping",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
