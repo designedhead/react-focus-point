@@ -22,6 +22,8 @@ interface FocusPointProps {
   };
   /** Whether to allow clicking on the image to set the focus point */
   allowImageClick?: boolean;
+  /** Optional custom class name for the focus point indicator (Tailwind classes) */
+  indicatorClassName?: string;
 }
 
 const DEFAULT_PERCENTAGE = 50;
@@ -38,7 +40,8 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
   className,
   indicatorSize = 'md',
   containerSize = { width: '300px', height: '300px' },
-  allowImageClick = true
+  allowImageClick = true,
+  indicatorClassName
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [x, setX] = useState<number>(initialFocusPoint?.x ?? DEFAULT_PERCENTAGE);
@@ -144,9 +147,10 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
           top: `${y}%`
         }}
         className={cn(
-          'absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary/40',
+          'absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-blue-500/50',
           indicatorSizeClasses[indicatorSize],
-          canMove ? 'cursor-grabbing' : 'cursor-grab'
+          canMove ? 'cursor-grabbing' : 'cursor-grab',
+          indicatorClassName
         )}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
