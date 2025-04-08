@@ -1,8 +1,8 @@
 // Export components
-export { ImageFocusPoint } from './components/FocusPoint';
+export { default as FocusPoint } from './components/FocusPoint';
 
 // Export types
-export type { FocusPoint, TemplateProps } from './types';
+export type { FocusPoint as FocusPointType, TemplateProps } from './types';
 
 // Export utils
 export { cn } from './utils/cn';
