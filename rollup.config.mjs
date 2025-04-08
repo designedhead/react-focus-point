@@ -24,11 +24,21 @@ export default [
         sourcemap: true
       }
     ],
-    plugins: [external(), resolve(), commonjs(), typescript({ tsconfig: './tsconfig.json' }), terser()],
+    plugins: [
+      external(),
+      resolve(),
+      commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: 'dist/types'
+      }),
+      terser()
+    ],
     external: ['react', 'react-dom', 'clsx', 'tailwind-merge']
   },
   {
-    input: 'dist/types/index.d.ts',
+    input: 'src/index.ts',
     output: [{ file: 'dist/index.d.ts', format: 'esm' }],
     plugins: [dts()],
     external: [/\.css$/]

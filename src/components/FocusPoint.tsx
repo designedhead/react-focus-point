@@ -2,7 +2,7 @@ import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import { cn } from '../utils/cn';
 import { FocusPoint } from '../types';
 
-interface FocusPointProps {
+export interface FocusPointProps {
   /** Source URL for the image */
   src: string;
   /** Callback function that receives the new focus point when changed */
