@@ -1,6 +1,6 @@
 # React Focus Point
 
-[GIF demonstration will be added here]
+![React Focus Point Demo](./public/demo.gif)
 
 A React component that helps maintain the focus point of images across different viewport sizes and aspect ratios. Perfect for ensuring that important elements within your images remain centered and visible regardless of how the image is cropped or resized.
 
