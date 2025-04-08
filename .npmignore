@@ -1,0 +1,18 @@
+# Source
+/src
+
+# Tests
+/tests
+/coverage
+jest.config.js
+
+# Config files
+.github
+.gitignore
+.eslintrc
+rollup.config.js
+tsconfig.json
+
+# Misc
+.DS_Store
+*.log
