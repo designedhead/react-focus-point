@@ -1,6 +1,6 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
-import { cn } from "../utils/cn";
-import { FocusPoint } from "../types";
+import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import { cn } from '../utils/cn';
+import { FocusPoint } from '../types';
 
 interface FocusPointProps {
   /** Source URL for the image */
@@ -14,7 +14,7 @@ interface FocusPointProps {
   /** Classname for the root element */
   className?: string;
   /** Optional size for the focus point indicator */
-  indicatorSize?: "sm" | "md" | "lg";
+  indicatorSize?: 'sm' | 'md' | 'lg';
   /** Optional size constraints for the container */
   containerSize?: {
     width?: string;
@@ -33,20 +33,16 @@ const DEFAULT_PERCENTAGE = 50;
 export const ImageFocusPoint: React.FC<FocusPointProps> = ({
   src,
   onChange,
-  alt = "",
+  alt = '',
   focusPoint: initialFocusPoint,
   className,
-  indicatorSize = "md",
-  containerSize = { width: "300px", height: "300px" },
-  allowImageClick = true,
+  indicatorSize = 'md',
+  containerSize = { width: '300px', height: '300px' },
+  allowImageClick = true
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [x, setX] = useState<number>(
-    initialFocusPoint?.x ?? DEFAULT_PERCENTAGE
-  );
-  const [y, setY] = useState<number>(
-    initialFocusPoint?.y ?? DEFAULT_PERCENTAGE
-  );
+  const [x, setX] = useState<number>(initialFocusPoint?.x ?? DEFAULT_PERCENTAGE);
+  const [y, setY] = useState<number>(initialFocusPoint?.y ?? DEFAULT_PERCENTAGE);
   const [canMove, setCanMove] = useState(false);
 
   // Update internal state if external focusPoint prop changes
@@ -59,9 +55,9 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
 
   // Map indicator size to Tailwind classes
   const indicatorSizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
+    sm: 'w-4 h-4',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8'
   };
 
   // Convert pixel coordinates to percentages
@@ -92,7 +88,7 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
 
     // Skip if we're clicking on the focal point button itself
     const target = e.target as HTMLElement;
-    if (target.tagName === "BUTTON" || target.closest("button")) {
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
       return;
     }
 
@@ -117,54 +113,50 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
     setCanMove(true);
 
     // Add event listeners to handle cases where mouse up happens outside the component
-    document.addEventListener("mouseup", handleMouseUp);
-    document.addEventListener("mouseleave", handleMouseUp);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseleave', handleMouseUp);
   };
 
   // Stop dragging the focal point
   const handleMouseUp = (): void => {
     setCanMove(false);
-    document.removeEventListener("mouseup", handleMouseUp);
-    document.removeEventListener("mouseleave", handleMouseUp);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('mouseleave', handleMouseUp);
   };
 
   return (
     <div
       ref={containerRef}
-      className={cn(
-        "relative select-none",
-        allowImageClick && !canMove && "cursor-crosshair",
-        className
-      )}
+      className={cn('relative select-none', allowImageClick && !canMove && 'cursor-crosshair', className)}
       style={{
         width: containerSize.width,
-        height: containerSize.height,
+        height: containerSize.height
       }}
       onMouseMove={handleMouseMove}
       onClick={handleContainerClick}
     >
       {/* Focal point indicator */}
       <button
-        type="button"
-        aria-label="Focal point"
+        type='button'
+        aria-label='Focal point'
         style={{
           left: `${x}%`,
-          top: `${y}%`,
+          top: `${y}%`
         }}
         className={cn(
-          "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary/40",
+          'absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary/40',
           indicatorSizeClasses[indicatorSize],
-          canMove ? "cursor-grabbing" : "cursor-grab"
+          canMove ? 'cursor-grabbing' : 'cursor-grab'
         )}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onClick={(e) => e.stopPropagation()} // Prevent click from reaching container
+        onClick={e => e.stopPropagation()} // Prevent click from reaching container
         tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             // Toggle the drag mode on Enter or Space
-            setCanMove((prev) => !prev);
+            setCanMove(prev => !prev);
           }
         }}
       />
@@ -172,9 +164,9 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
       {/* The image */}
       <img
         style={{
-          objectPosition: `${x}% ${y}%`,
+          objectPosition: `${x}% ${y}%`
         }}
-        className="pointer-events-none size-full select-none object-cover"
+        className='pointer-events-none size-full select-none object-cover'
         src={src}
         alt={alt}
       />
