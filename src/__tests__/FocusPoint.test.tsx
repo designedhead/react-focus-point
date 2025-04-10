@@ -83,7 +83,7 @@ describe('ImageFocusPoint', () => {
     render(<ImageFocusPoint src={testSrc} onChange={mockOnChange} indicatorSize='lg' />);
 
     const focalPoint = screen.getByLabelText('Focal point');
-    expect(focalPoint).toHaveClass('w-8 h-8');
+    expect(focalPoint).toHaveClass('size-8');
   });
 
   test('applies custom container size', () => {
