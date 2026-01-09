@@ -176,7 +176,7 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
       }}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      onTouchEnd={(e) => {
+      onTouchEnd={e => {
         // Only trigger tap if we weren't dragging the indicator
         if (!isDraggingRef.current) {
           handleContainerTap(e);
