@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 import { cn } from '../utils/cn';
 import { FocusPoint } from '../types';
 
@@ -47,6 +47,7 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
   const [x, setX] = useState<number>(initialFocusPoint?.x ?? DEFAULT_PERCENTAGE);
   const [y, setY] = useState<number>(initialFocusPoint?.y ?? DEFAULT_PERCENTAGE);
   const [canMove, setCanMove] = useState(false);
+  const isDraggingRef = useRef(false); // Track if user is dragging (for touch)
 
   // Update internal state if external focusPoint prop changes
   useEffect(() => {
@@ -68,13 +69,13 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
     return Math.min(Math.max((value * 100) / max, 0), 100);
   };
 
-  // Handle mouse movement during dragging
-  const handleMouseMove = (e: MouseEvent): void => {
-    if (!canMove || !containerRef.current) return;
+  // Update position from pixel coordinates
+  const updatePosition = (clientX: number, clientY: number): void => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const xPixels = e.clientX - rect.left;
-    const yPixels = e.clientY - rect.top;
+    const xPixels = clientX - rect.left;
+    const yPixels = clientY - rect.top;
 
     const newX = calculatePercentage(xPixels, rect.width);
     const newY = calculatePercentage(yPixels, rect.height);
@@ -82,6 +83,21 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
     setX(newX);
     setY(newY);
     onChange({ x: newX, y: newY });
+  };
+
+  // Handle mouse movement during dragging
+  const handleMouseMove = (e: MouseEvent): void => {
+    if (!canMove || !containerRef.current) return;
+    updatePosition(e.clientX, e.clientY);
+  };
+
+  // Handle touch movement during dragging
+  const handleTouchMove = (e: TouchEvent): void => {
+    if (!canMove || !containerRef.current) return;
+    const touch = e.touches[0];
+    if (touch) {
+      updatePosition(touch.clientX, touch.clientY);
+    }
   };
 
   // Handle direct click on the container
@@ -95,21 +111,27 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
       return;
     }
 
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const xPixels = e.clientX - rect.left;
-    const yPixels = e.clientY - rect.top;
-
-    const newX = calculatePercentage(xPixels, rect.width);
-    const newY = calculatePercentage(yPixels, rect.height);
-
-    setX(newX);
-    setY(newY);
-    onChange({ x: newX, y: newY });
+    updatePosition(e.clientX, e.clientY);
   };
 
-  // Start dragging the focal point
+  // Handle direct tap on the container (mobile)
+  const handleContainerTap = (e: TouchEvent): void => {
+    // Only allow if clicking is enabled and we're not dragging
+    if (!allowImageClick || canMove) return;
+
+    // Skip if we're tapping on the focal point button itself
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    if (touch) {
+      updatePosition(touch.clientX, touch.clientY);
+    }
+  };
+
+  // Start dragging the focal point (mouse)
   const handleMouseDown = (e: MouseEvent): void => {
     e.preventDefault();
     e.stopPropagation(); // Prevent triggering container click
@@ -120,11 +142,28 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
     document.addEventListener('mouseleave', handleMouseUp);
   };
 
-  // Stop dragging the focal point
+  // Stop dragging the focal point (mouse)
   const handleMouseUp = (): void => {
     setCanMove(false);
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('mouseleave', handleMouseUp);
+  };
+
+  // Start dragging the focal point (touch)
+  const handleTouchStart = (e: TouchEvent): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCanMove(true);
+    isDraggingRef.current = true;
+  };
+
+  // Stop dragging the focal point (touch)
+  const handleTouchEnd = (): void => {
+    setCanMove(false);
+    // Reset dragging flag after a short delay to allow tap detection
+    setTimeout(() => {
+      isDraggingRef.current = false;
+    }, 50);
   };
 
   return (
@@ -136,6 +175,13 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
         height: containerSize.height
       }}
       onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={(e) => {
+        // Only trigger tap if we weren't dragging the indicator
+        if (!isDraggingRef.current) {
+          handleContainerTap(e);
+        }
+      }}
       onClick={handleContainerClick}
     >
       {/* Focal point indicator */}
@@ -154,6 +200,8 @@ export const ImageFocusPoint: React.FC<FocusPointProps> = ({
         )}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onClick={e => e.stopPropagation()} // Prevent click from reaching container
         tabIndex={0}
         onKeyDown={e => {
